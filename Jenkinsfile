@@ -24,7 +24,9 @@ pipeline {
                 }          
             }
         }
-        post{
+        
+    }
+    post{
             always {
                 echo ' done!!! '
             }
@@ -32,5 +34,4 @@ pipeline {
                 echo 'Build failed!'
             }
         }
-    }
 }
