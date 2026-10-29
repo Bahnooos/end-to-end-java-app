@@ -1,3 +1,4 @@
+def gv
 pipeline {
     agent any
     
@@ -6,9 +7,15 @@ pipeline {
         booleanParam(name: ' valid_test', defaultValue: true,description: 'Is this a valid test?')
     }
     stages {
+        stage('init') {
+            steps {
+                gv = load 'script.groovy'
+                
+            }
+        }
         stage('Build') {
             steps {
-                echo "Building the application..."
+                gv.buildApp()
                 
             }
         }
@@ -20,13 +27,12 @@ pipeline {
                      }
                 }
             steps {
-                echo 'Building the Docker image...'
-                
+                gv.testApp()                
             }
         }
         stage('deploy') {
-            steps {
-                echo "Running the Docker container...${params.version}"             
+            steps {                    
+                gv.deployApp()       
             }
         }        
     }
