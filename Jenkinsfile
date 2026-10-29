@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     parameters {
-        choice(name:'version', choices:[1.0.0, 1.1.0, 1.2.0], description:'Select the version of the application')
+        choice(name:'version', choices:['1.0.0', '1.1.0', '1.2.0'], description:'Select the version of the application')
         booleanParam(name: ' valid_test', defaultValue: true,description: 'Is this a valid test?')
     }
     stages {
