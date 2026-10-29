@@ -1,37 +1,33 @@
 pipeline {
     agent any
-    environment {
-        APP_VERSION = '1.0-SNAPSHOT'
+    
+    parameters {
+        choice(name:'version', choices:[1.0.0, 1.1.0, 1.2.0], description:'Select the version of the application')
+        booleanParam(name: ' valid_test', defaultValue: true,description: 'Is this a valid test?')
     }
     stages {
         stage('Build') {
             steps {
-                echo "Building the application... ${APP_VERSION}"
+                echo "Building the application..."
                 
             }
         }
         stage('Docker Build') {
             steps {
+                when{
+                    expression { 
+                        params.valid_test 
+                        params.version == '1.2.0'
+                     }
+                }
                 echo 'Building the Docker image...'
                 
             }
         }
         stage('Docker Run') {
             steps {
-                echo 'Running the Docker container...'      
-                with([usernamePassword(credentialsId: 'server_crd',usernameVariable: 'USERNAME',passwordVariable: 'PASSWORD')]){
-                    echo " some script ${USERNAME} and ${PASSWORD}"
-                }          
+                echo 'Running the Docker container...${params.version}'             
             }
-        }
-        
+        }        
     }
-    post{
-            always {
-                echo ' done!!! '
-            }
-            failure {
-                echo 'Build failed!'
-            }
-        }
 }
