@@ -13,13 +13,13 @@ pipeline {
             }
         }
         stage('Docker Build') {
-            steps {
-                when{
+               when{
                     expression { 
                         params.valid_test 
                         params.version == '1.2.0'
                      }
                 }
+            steps {
                 echo 'Building the Docker image...'
                 
             }
