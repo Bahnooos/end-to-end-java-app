@@ -12,7 +12,7 @@ pipeline {
                 
             }
         }
-        stage('Docker Build') {
+        stage('test') {
                when{
                     expression { 
                         params.valid_test 
@@ -24,9 +24,9 @@ pipeline {
                 
             }
         }
-        stage('Docker Run') {
+        stage('deploy') {
             steps {
-                echo 'Running the Docker container...${params.version}'             
+                echo "Running the Docker container...${params.version}"             
             }
         }        
     }
