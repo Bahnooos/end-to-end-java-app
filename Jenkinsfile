@@ -1,44 +1,35 @@
-def gv
 pipeline {
     agent any
     
-    parameters {
-        choice(name:'version', choices:['1.0.0', '1.1.0', '1.2.0'], description:'Select the version of the application')
-        booleanParam(name: ' valid_test', defaultValue: true,description: 'Is this a valid test?')
+   tools {
+        maven 'maven-3.10'
     }
-    stages {
-        stage('init') {
+        stage('Build Jar') {
             steps {
                 script {
-                gv = load 'script.groovy'
-                }
-            }
-        }
-        stage('Build') {
-            steps {
-                script {
-                gv.buildApp() 
+                    echo 'Building the application...'
+                    sh 'mvn package'
                 }
                 
-            }
-        }
-        stage('test') {
-               when{
-                    expression { 
-                        params.valid_test 
-                        params.version == '1.2.0'
-                     }
-                }
+            }}
+        stage('Build Image') {
             steps {
                 script {
-                gv.testApp()                
+                    echo 'Building the Docker Image...'
+                    sh 'docker build -t bahnas/demo-app:v1.0 .'
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                        sh ' echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                    }
+                    sh 'docker push bahnas/demo-app:v1.0'
+               
                 }
-            }
-        }
+                
+            }}
+
         stage('deploy') {
             steps {     
                 script {
-                     gv.deployApp()  
+                     echo 'Deploying the application...'
                 }               
                     
             }
